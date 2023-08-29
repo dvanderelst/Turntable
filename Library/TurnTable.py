@@ -4,8 +4,11 @@ from Library import Settings
 import time
 import math
 
+def wrapTo360(angle):
+    return angle % 360.     
+
 class TurnTable:
-    def __init__(self, verbose=False):
+    def __init__(self, offset=0., verbose=False):
         self.field = Settings.table_field
         self.match = Settings.table_match
         self.motor_id = 2
@@ -14,10 +17,10 @@ class TurnTable:
         self.motor = self.dxl_io.new_xl430(self.motor_id, 2)
         self.motor.set_position_mode()
         self.velocity = 100
+        self.offset = offset
 
     def position(self, x, block=True):
-        x = x + 180
-
+        x = wrapTo360(x + self.offset)
         self.motor.torque_enable()
         self.motor.set_velocity(self.velocity)
         self.motor.set_angle(x)
